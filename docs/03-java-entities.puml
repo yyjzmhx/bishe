@@ -1,0 +1,166 @@
+﻿@startuml
+
+' ============================================================
+' 个性化音乐推荐系统 — Java 实体类图 (PlantUML)
+' ============================================================
+
+title 个性化音乐推荐系统 — Java 实体类图
+
+skinparam classAttributeIconSize 0
+
+class User {
+  + id : Long
+  + username : String
+  + phone : String
+  + email : String
+  + password : String
+  + avatar : String
+  + nickname : String
+  + preferences : String
+  + role : String
+  + status : Integer
+  + createTime : LocalDateTime
+  + updateTime : LocalDateTime
+}
+
+class Music {
+  + id : Long
+  + title : String
+  + artist : String
+  + album : String
+  + fileUrl : String
+  + previewUrl : String
+  + duration : Integer
+  + genre : String
+  + lyrics : String
+  + features : String
+  + coverUrl : String
+  + playCount : Integer
+  + likeCount : Integer
+  + status : Integer
+  + createTime : LocalDateTime
+  + updateTime : LocalDateTime
+}
+
+class UploadRecord {
+  + id : Long
+  + userId : Long
+  + fileUrl : String
+  + fileName : String
+  + fileSize : Long
+  + fileType : String
+  + status : String
+  + features : String
+  + analysisResult : String
+  + errorMessage : String
+  + createTime : LocalDateTime
+  + updateTime : LocalDateTime
+}
+
+class RecommendRecord {
+  + id : Long
+  + uploadId : Long
+  + musicId : Long
+  + similarity : BigDecimal
+  + rank : Integer
+  + createTime : LocalDateTime
+  --
+  + music : Music
+}
+
+class Feedback {
+  + id : Long
+  + userId : Long
+  + recommendId : Long
+  + musicId : Long
+  + parentId : Long
+  + type : String
+  + content : String
+  + createTime : LocalDateTime
+}
+
+class CommentLike {
+  + id : Long
+  + commentId : Long
+  + userId : Long
+  + createTime : LocalDateTime
+}
+
+class Notice {
+  + id : Long
+  + title : String
+  + content : String
+  + type : String
+  + status : Integer
+  + publishTime : LocalDateTime
+  + createTime : LocalDateTime
+  + updateTime : LocalDateTime
+}
+
+class SiteContent {
+  + id : Long
+  + type : String
+  + title : String
+  + content : String
+  + imageUrl : String
+  + linkUrl : String
+  + sortOrder : Integer
+  + status : Integer
+  + createTime : LocalDateTime
+  + updateTime : LocalDateTime
+}
+
+class AIConfig {
+  + id : Long
+  + provider : String
+  + apiKey : String
+  + baseUrl : String
+  + model : String
+  + temperature : BigDecimal
+  + timeout : Integer
+  + analysisStrategy : String
+  + isActive : Boolean
+  + createTime : LocalDateTime
+  + updateTime : LocalDateTime
+}
+
+class ReportTemplate {
+  + id : Long
+  + name : String
+  + description : String
+  + config : String
+  + isDefault : Boolean
+  + status : Integer
+  + createTime : LocalDateTime
+  + updateTime : LocalDateTime
+}
+
+class UserPersonalTag {
+  + id : Long
+  + userId : Long
+  + name : String
+  + color : String
+  + sortOrder : Integer
+  + createTime : LocalDateTime
+  + updateTime : LocalDateTime
+}
+
+' ===== 关联 =====
+
+User "1" --> "0..*" UploadRecord : userId
+User "1" --> "0..*" Feedback : userId
+User "1" --> "0..*" UserPersonalTag : userId
+User "1" --> "0..*" CommentLike : userId
+
+UploadRecord "1" --> "0..*" RecommendRecord : uploadId
+
+Music "1" --> "0..*" RecommendRecord : musicId
+Music "1" --> "0..*" Feedback : musicId
+Music --o RecommendRecord : "music (关联查询)"
+
+RecommendRecord "1" --> "0..*" Feedback : recommendId
+
+Feedback "1" --> "0..*" CommentLike : commentId
+Feedback "1" --> "0..*" Feedback : "parentId (自引用)"
+
+@enduml

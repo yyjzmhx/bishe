@@ -1,0 +1,34 @@
+﻿@startuml
+title 音乐浏览时序图
+
+actor 用户 as User
+participant ":浏览页面" as Frontend
+participant ":MusicController" as MC
+participant ":MusicService" as MS
+participant ":MusicDao" as MD
+participant ":DB" as DB
+
+User -> Frontend: 1:搜索/浏览音乐
+Frontend -> MC: 2:查询音乐列表请求
+MC -> MS: 3:条件查询上架音乐
+MS -> MD: 4:分页查询音乐表
+MD -> DB: 5:查询音乐表
+DB --> Frontend: 6:返回音乐列表
+Frontend --> User: 7:展示列表
+
+User -> Frontend: 8:点击播放音乐
+Frontend -> MC: 9:查询音乐详情请求
+MC -> MS: 10:查询音乐详情
+MS -> MD: 11:按ID查询音乐
+MD -> DB: 12:查询音乐表
+DB --> Frontend: 13:返回{音乐详情, 试听地址}
+Frontend --> User: 14:播放音乐
+
+User -> Frontend: 15:管理播放列表/播放状态
+Frontend -> MC: 16:保存/获取请求
+MC -> MS: 17:读写播放列表和播放状态
+MS -> MS: 18:存取缓存(TTL 30天)
+MS --> Frontend: 19:返回结果
+Frontend --> User: 20:更新播放器
+
+@enduml

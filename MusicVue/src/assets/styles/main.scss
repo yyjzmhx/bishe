@@ -1,0 +1,364 @@
+@import './variables.scss';
+@import './mixins.scss';
+@import './nextui-mixins.scss';
+@import './reset.scss';
+@import './drawer-override.scss';
+
+// 动画
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+// 加载骨架屏
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-light) 25%,
+    rgba(255, 255, 255, 0.5) 50%,
+    var(--bg-light) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+// 渐变背景
+.gradient-bg {
+  background: var(--primary-gradient);
+}
+
+// 玻璃态卡片
+.glass-card {
+  @include glass-card;
+}
+
+// 通用工具类
+.text-gradient {
+  @include gradient-text;
+}
+
+.card {
+  @include card;
+}
+
+.btn-gradient {
+  @include gradient-button;
+}
+
+.flex-center {
+  @include flex-center;
+}
+
+.text-ellipsis {
+  @include text-ellipsis;
+}
+
+.text-ellipsis-2 {
+  @include text-ellipsis(2);
+}
+
+.text-ellipsis-3 {
+  @include text-ellipsis(3);
+}
+
+// 全局样式：确保底部播放器在浅色模式下文字和图标为黑色
+[data-theme="light"] {
+  .bottom-control-bar {
+    // 强制所有文字为黑色
+    color: #111827 !important;
+    
+    // 所有按钮文字和图标
+    .el-button {
+      color: #111827 !important;
+      
+      .el-icon {
+        color: #111827 !important;
+      }
+      
+      span {
+        color: #111827 !important;
+      }
+      
+      // 播放按钮保持青色背景白色图标
+      &.el-button--large {
+        color: #fff !important;
+        
+        .el-icon {
+          color: #fff !important;
+        }
+      }
+    }
+    
+    // 时间标签
+    .time-label {
+      color: rgba(17, 24, 39, 0.7) !important;
+    }
+    
+    // 歌曲信息
+    .song-info {
+      color: #111827 !important;
+      
+      .song-title {
+        color: #111827 !important;
+      }
+      
+      .song-artist {
+        color: rgba(17, 24, 39, 0.7) !important;
+      }
+    }
+  }
+}
+
+// Element Plus 菜单组件主题适配
+[data-theme="dark"] {
+  .el-menu {
+    background-color: transparent !important;
+    border-color: var(--border-color) !important;
+  }
+  
+  .el-menu-item {
+    color: var(--text-light) !important;
+    
+    &:hover {
+      background-color: rgba(64, 158, 255, 0.15) !important;
+    }
+    
+    &.is-active {
+      background: var(--primary-gradient) !important;
+      color: white !important;
+    }
+  }
+  
+  .el-sub-menu {
+    .el-sub-menu__title {
+      color: var(--text-light) !important;
+      
+      &:hover {
+        background-color: rgba(64, 158, 255, 0.15) !important;
+      }
+    }
+    
+    &.is-opened .el-sub-menu__title {
+      background-color: rgba(64, 158, 255, 0.15) !important;
+    }
+    
+    .el-menu {
+      background-color: transparent !important;
+      
+      .el-menu-item {
+        color: var(--text-light) !important;
+        
+        &:hover {
+          background-color: rgba(64, 158, 255, 0.12) !important;
+        }
+        
+        &.is-active {
+          background: var(--primary-gradient) !important;
+          color: white !important;
+        }
+      }
+    }
+  }
+}
+
+// 评论抽屉主题适配 - 全局样式确保优先级
+.comment-drawer {
+  .el-drawer {
+    border: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+    box-shadow: -4px 0 40px rgba(0, 0, 0, 0.15) !important;
+    
+    &::before,
+    &::after {
+      display: none !important;
+      border: none !important;
+    }
+  }
+  
+  .el-drawer__wrapper {
+    border: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+    
+    &::before,
+    &::after {
+      display: none !important;
+      border: none !important;
+    }
+  }
+  
+  .el-drawer__body {
+    border: none !important;
+    border-color: transparent !important;
+    
+    &::before,
+    &::after {
+      display: none !important;
+      border: none !important;
+    }
+  }
+  
+  .el-drawer__header {
+    border: none !important;
+    border-bottom: none !important;
+    border-color: transparent !important;
+  }
+  
+  [data-theme="dark"] & {
+    .el-drawer {
+      background: rgba(15, 23, 42, 0.98) !important;
+      border: none !important;
+      border-left: none !important;
+      border-right: none !important;
+      border-top: none !important;
+      border-bottom: none !important;
+      border-color: transparent !important;
+      outline: none !important;
+      box-shadow: -4px 0 40px rgba(0, 0, 0, 0.6) !important;
+    }
+    
+    .el-drawer__wrapper {
+      border: none !important;
+      border-color: transparent !important;
+      outline: none !important;
+    }
+    
+    .el-drawer__body {
+      border: none !important;
+      border-color: transparent !important;
+    }
+    
+    .el-drawer__header {
+      border: none !important;
+      border-bottom: none !important;
+      border-color: transparent !important;
+    }
+  }
+}
+
+// 暗色模式下的评论抽屉全局样式 - 更高优先级
+[data-theme="dark"] {
+  // 使用最高优先级的选择器
+  body .comment-drawer,
+  html .comment-drawer,
+  #app .comment-drawer {
+    .el-drawer,
+    .el-drawer__wrapper,
+    .el-drawer__body,
+    .el-drawer__header,
+    .el-drawer__close-btn {
+      border: 0 !important;
+      border-left: 0 !important;
+      border-right: 0 !important;
+      border-top: 0 !important;
+      border-bottom: 0 !important;
+      border-width: 0 !important;
+      border-style: none !important;
+      border-color: transparent !important;
+      outline: none !important;
+      box-shadow: none !important;
+      
+      &::before,
+      &::after {
+        display: none !important;
+        border: none !important;
+        content: none !important;
+        border-width: 0 !important;
+        border-style: none !important;
+        border-color: transparent !important;
+      }
+    }
+    
+    .el-drawer {
+      background: rgba(15, 23, 42, 0.98) !important;
+      box-shadow: -4px 0 40px rgba(0, 0, 0, 0.6) !important;
+    }
+  }
+  
+  // 直接针对 drawer 元素 - 最高优先级
+  body .el-drawer.comment-drawer,
+  html .el-drawer.comment-drawer,
+  #app .el-drawer.comment-drawer,
+  body .comment-drawer .el-drawer,
+  html .comment-drawer .el-drawer,
+  #app .comment-drawer .el-drawer {
+    border: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+    
+    &::before,
+    &::after {
+      display: none !important;
+      border: none !important;
+      content: none !important;
+      border-width: 0 !important;
+      border-style: none !important;
+      border-color: transparent !important;
+    }
+  }
+}
+

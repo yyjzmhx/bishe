@@ -1,0 +1,13 @@
+-- 创建用户个性化标签表
+CREATE TABLE IF NOT EXISTS `user_personal_tag` (
+  `id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '标签ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `name` VARCHAR(50) NOT NULL COMMENT '标签名称',
+  `color` VARCHAR(20) DEFAULT '#409EFF' COMMENT '标签颜色（十六进制）',
+  `sort_order` INT DEFAULT 0 COMMENT '排序顺序',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
+  INDEX `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户个性化标签表';
+

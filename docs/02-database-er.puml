@@ -1,0 +1,195 @@
+﻿@startuml
+
+' ============================================================
+' 个性化音乐推荐系统 — 数据库 ER 图 (PlantUML)
+' ============================================================
+
+title 个性化音乐推荐系统 — 数据库 ER 图
+
+entity "user" as user {
+  + id : BIGINT <<PK>>
+  --
+  username : VARCHAR(50) <<UK>>
+  phone : VARCHAR(20) <<UK>>
+  email : VARCHAR(100) <<UK>>
+  password : VARCHAR(255)
+  avatar : VARCHAR(500)
+  nickname : VARCHAR(50)
+  preferences : JSON
+  role : VARCHAR(20)
+  status : TINYINT
+  create_time : DATETIME
+  update_time : DATETIME
+}
+
+entity "music" as music {
+  + id : BIGINT <<PK>>
+  --
+  title : VARCHAR(200)
+  artist : VARCHAR(100)
+  album : VARCHAR(200)
+  file_url : VARCHAR(500)
+  preview_url : VARCHAR(500)
+  duration : INT
+  genre : VARCHAR(50)
+  lyrics : TEXT
+  features : JSON
+  cover_url : VARCHAR(500)
+  play_count : INT
+  like_count : INT
+  status : TINYINT
+  create_time : DATETIME
+  update_time : DATETIME
+}
+
+entity "upload_record" as upload_record {
+  + id : BIGINT <<PK>>
+  --
+  user_id : BIGINT <<FK>>
+  file_url : VARCHAR(500)
+  file_name : VARCHAR(255)
+  file_size : BIGINT
+  file_type : VARCHAR(50)
+  status : VARCHAR(20)
+  features : JSON
+  analysis_result : TEXT
+  error_message : VARCHAR(500)
+  create_time : DATETIME
+  update_time : DATETIME
+}
+
+entity "recommend_record" as recommend_record {
+  + id : BIGINT <<PK>>
+  --
+  upload_id : BIGINT <<FK>>
+  music_id : BIGINT <<FK>>
+  similarity : DECIMAL(5,4)
+  rank : INT
+  create_time : DATETIME
+}
+
+entity "feedback" as feedback {
+  + id : BIGINT <<PK>>
+  --
+  user_id : BIGINT <<FK>>
+  recommend_id : BIGINT <<FK>>
+  music_id : BIGINT <<FK>>
+  parent_id : BIGINT <<FK>>
+  type : VARCHAR(20)
+  content : TEXT
+  create_time : DATETIME
+}
+
+entity "comment_like" as comment_like {
+  + id : BIGINT <<PK>>
+  --
+  comment_id : BIGINT <<FK>>
+  user_id : BIGINT <<FK>>
+  create_time : DATETIME
+  --
+  <<UK>> (comment_id, user_id)
+}
+
+entity "notice" as notice {
+  + id : BIGINT <<PK>>
+  --
+  title : VARCHAR(200)
+  content : TEXT
+  type : VARCHAR(20)
+  status : TINYINT
+  publish_time : DATETIME
+  create_time : DATETIME
+  update_time : DATETIME
+}
+
+entity "site_content" as site_content {
+  + id : BIGINT <<PK>>
+  --
+  type : VARCHAR(50)
+  title : VARCHAR(200)
+  content : TEXT
+  image_url : VARCHAR(500)
+  link_url : VARCHAR(500)
+  sort_order : INT
+  status : TINYINT
+  create_time : DATETIME
+  update_time : DATETIME
+}
+
+entity "verification_code" as verification_code {
+  + id : BIGINT <<PK>>
+  --
+  email : VARCHAR(100)
+  code : VARCHAR(10)
+  type : VARCHAR(20)
+  expire_time : DATETIME
+  is_used : TINYINT
+  create_time : DATETIME
+}
+
+entity "ai_config" as ai_config {
+  + id : BIGINT <<PK>>
+  --
+  provider : VARCHAR(50)
+  api_key : VARCHAR(500)
+  base_url : VARCHAR(500)
+  model : VARCHAR(100)
+  temperature : DECIMAL(3,2)
+  timeout : INT
+  analysis_strategy : VARCHAR(20)
+  is_active : TINYINT
+  create_time : DATETIME
+  update_time : DATETIME
+}
+
+entity "report_template" as report_template {
+  + id : BIGINT <<PK>>
+  --
+  name : VARCHAR(100)
+  description : TEXT
+  config : JSON
+  is_default : TINYINT
+  status : TINYINT
+  create_time : DATETIME
+  update_time : DATETIME
+}
+
+entity "user_personal_tag" as user_personal_tag {
+  + id : BIGINT <<PK>>
+  --
+  user_id : BIGINT <<FK>>
+  name : VARCHAR(50)
+  color : VARCHAR(20)
+  sort_order : INT
+  create_time : DATETIME
+  update_time : DATETIME
+}
+
+entity "user_behavior" as user_behavior {
+  + id : BIGINT <<PK>>
+  --
+  user_id : BIGINT
+  action : VARCHAR(50)
+  target_type : VARCHAR(50)
+  target_id : BIGINT
+  create_time : DATETIME
+}
+
+' ===== 关系 =====
+
+user ||--o{ upload_record : "上传"
+user ||--o{ feedback : "反馈"
+user ||--o{ user_personal_tag : "个性化标签"
+user ||--o{ comment_like : "点赞评论"
+
+upload_record ||--o{ recommend_record : "推荐结果"
+
+music ||--o{ recommend_record : "被推荐"
+music ||--o{ feedback : "被评价"
+
+recommend_record ||--o{ feedback : "推荐反馈"
+
+feedback ||--o{ comment_like : "评论点赞"
+feedback ||--o{ feedback : "评论回复 (parent_id)"
+
+@enduml

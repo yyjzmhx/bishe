@@ -1,0 +1,27 @@
+﻿@startuml
+title 内容资源管理时序图
+
+actor 管理员 as Admin
+participant ":管理页面" as Frontend
+participant ":AdminMusicController" as AMC
+participant ":MusicService" as MS
+participant ":MusicDao" as MD
+participant ":DB" as DB
+
+Admin -> Frontend: 1:上传音频和封面
+Frontend -> AMC: 2:添加音乐请求
+AMC -> MS: 3:校验文件，保存音频和封面到MinIO
+MS -> MD: 4:插入音乐记录
+MD -> DB: 5:写入音乐表
+MS -> MS: 6:自动提取音频特征并更新
+DB --> Frontend: 7:添加成功
+Frontend --> Admin: 8:展示新音乐
+
+Admin -> Frontend: 9:编辑/删除音乐/管理内容
+Frontend -> AMC: 10:管理请求
+AMC -> MS: 11:增删改查操作
+MS -> MD: 12:数据库读写
+MD -> DB: 13:读写对应数据表
+DB --> Frontend: 14:返回结果
+
+@enduml

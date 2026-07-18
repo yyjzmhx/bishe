@@ -1,0 +1,66 @@
+﻿@startuml
+title 用户注册、登录、修改个人信息时序图
+
+actor 用户 as User
+participant ":前端页面" as Frontend
+participant ":AuthController" as AC
+participant ":UserService" as US
+participant ":UserDao" as UD
+participant ":DB" as DB
+
+User -> Frontend: 1:填写注册信息，提交
+Frontend -> AC: 2:POST /api/auth/register
+AC -> US: 3:register(user)
+US -> UD: 4:selectByUsername(username)
+UD -> DB: 5:SELECT FROM user WHERE username=?
+DB --> UD: 6:null
+US -> UD: 7:selectByEmail(email)
+UD -> DB: 8:SELECT FROM user WHERE email=?
+DB --> UD: 9:null
+US -> US: 10:BCrypt加密密码
+US -> UD: 11:insert(user)
+UD -> DB: 12:INSERT INTO user
+DB --> UD: 13:1
+US --> AC: 14:true
+AC --> Frontend: 15:注册成功
+Frontend --> User: 16:跳转登录页
+
+User -> Frontend: 17:输入用户名、密码，点击登录
+Frontend -> AC: 18:POST /api/auth/login
+AC -> US: 19:login(username, password)
+US -> UD: 20:selectByUsername(username)
+UD -> DB: 21:SELECT * FROM user WHERE username=?
+DB --> UD: 22:User
+US -> US: 23:BCrypt校验密码
+
+alt 密码错误
+    US --> AC: 24:null
+    AC --> Frontend: 25:用户名或密码错误
+    Frontend --> User: 26:提示错误
+else 账号被禁用
+    AC --> Frontend: 27:账号已被禁用
+    Frontend --> User: 28:提示已禁用
+else 登录成功
+    AC -> AC: 29:生成JWT Token
+    AC --> Frontend: 30:Result{token, userId, username, role}
+    Frontend -> Frontend: 31:存储token
+    Frontend --> User: 32:跳转首页
+
+    User -> Frontend: 33:修改昵称/头像，提交
+    Frontend -> AC: 34:PUT /api/user/profile
+    AC -> AC: 35:从Token解析userId
+    AC -> US: 36:update(user)
+    US -> UD: 37:update(user)
+    UD -> DB: 38:UPDATE user SET … WHERE id=?
+    DB --> UD: 39:1
+
+    alt 更新失败
+        AC --> Frontend: 40:更新失败
+        Frontend --> User: 41:提示错误
+    else 更新成功
+        AC --> Frontend: 42:更新成功
+        Frontend --> User: 43:刷新显示新信息
+    end
+end
+
+@enduml

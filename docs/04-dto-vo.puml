@@ -1,0 +1,135 @@
+﻿@startuml
+
+' ============================================================
+' 个性化音乐推荐系统 — DTO / VO 类图 (PlantUML)
+' ============================================================
+
+title 个性化音乐推荐系统 — DTO / VO 请求响应类图
+
+skinparam classAttributeIconSize 0
+
+class "Result<T>" as Result {
+  + code : Integer
+  + message : String
+  + data : T
+  --
+  + {static} success(T) : Result<T>
+  + {static} success(String, T) : Result<T>
+  + {static} error(String) : Result<T>
+  + {static} error(Integer, String) : Result<T>
+}
+
+class LoginRequest {
+  + username : String
+  + password : String
+}
+
+class RegisterRequest {
+  + username : String
+  + password : String
+  + phone : String
+  + email : String
+  + emailCode : String
+  + nickname : String
+}
+
+class LoginResponse {
+  + token : String
+  + userId : Long
+  + username : String
+  + role : String
+  + nickname : String
+  + avatar : String
+}
+
+class FeedbackVO {
+  + username : String
+  + nickname : String
+  + musicTitle : String
+  + musicArtist : String
+}
+
+class CommentVO {
+  + id : Long
+  + userId : Long
+  + musicId : Long
+  + parentId : Long
+  + content : String
+  + createTime : LocalDateTime
+  + username : String
+  + nickname : String
+  + avatar : String
+  + likeCount : Long
+  + isLiked : Boolean
+  + replyCount : Long
+  + replies : List<CommentVO>
+}
+
+class CommunityPostVO {
+  + musicTitle : String
+  + musicArtist : String
+  + musicCoverUrl : String
+}
+
+class UploadRecordVO {
+  + username : String
+  + nickname : String
+}
+
+class FavoriteMusicVO {
+  + favoriteId : Long
+  + id : Long
+  + title : String
+  + artist : String
+  + album : String
+  + fileUrl : String
+  + previewUrl : String
+  + duration : Integer
+  + genre : String
+  + lyrics : String
+  + coverUrl : String
+  + playCount : Integer
+  + likeCount : Integer
+  + status : Integer
+  + favoriteTime : LocalDateTime
+}
+
+' ===== 继承关系 =====
+
+class Feedback {
+  + id : Long
+  + userId : Long
+  + recommendId : Long
+  + musicId : Long
+  + parentId : Long
+  + type : String
+  + content : String
+  + createTime : LocalDateTime
+}
+
+class UploadRecord {
+  + id : Long
+  + userId : Long
+  + fileUrl : String
+  + fileName : String
+  + fileSize : Long
+  + fileType : String
+  + status : String
+  + features : String
+  + analysisResult : String
+  + errorMessage : String
+  + createTime : LocalDateTime
+  + updateTime : LocalDateTime
+}
+
+Feedback <|-- FeedbackVO : extends
+CommentVO <|-- CommunityPostVO : extends
+UploadRecord <|-- UploadRecordVO : extends
+
+' ===== 使用关系 =====
+
+Result ..> LoginResponse : <<data>>
+Result ..> CommentVO : <<data>>
+Result ..> FavoriteMusicVO : <<data>>
+
+@enduml

@@ -1,0 +1,34 @@
+﻿@startuml
+title 社区互动时序图
+
+actor 用户 as User
+participant ":社区页面" as Frontend
+participant ":FeedbackController" as FC
+participant ":FeedbackService" as FS
+participant ":FeedbackDao" as FD
+participant ":DB" as DB
+
+User -> Frontend: 1:发表/点赞评论
+Frontend -> FC: 2:评论/点赞请求
+FC -> FS: 3:提交评论或切换点赞
+FS -> FD: 4:增删评论表或点赞表
+FD -> DB: 5:读写对应数据表
+DB --> Frontend: 6:返回结果
+Frontend --> User: 7:更新页面
+
+User -> Frontend: 8:喜欢/收藏歌曲
+Frontend -> FC: 9:喜欢/收藏请求
+FC -> FS: 10:切换喜欢或收藏状态
+FS -> FD: 11:增删反馈记录
+FD -> DB: 12:读写反馈表
+DB --> Frontend: 13:返回状态
+Frontend --> User: 14:更新图标
+
+User -> Frontend: 15:查看社区动态/收藏
+Frontend -> FC: 16:查询请求
+FC -> FS: 17:获取数据
+FS -> FD: 18:联表查询评论/用户/音乐
+FD -> DB: 19:联表查询
+DB --> Frontend: 20:返回列表
+
+@enduml

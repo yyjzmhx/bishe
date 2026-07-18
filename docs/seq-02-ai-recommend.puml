@@ -1,0 +1,29 @@
+﻿@startuml
+title 音频AI推荐时序图
+
+actor 用户 as User
+participant ":上传页面" as Frontend
+participant ":RecommendController" as RC
+participant ":RecommendService" as RS
+participant ":RecommendRecordDao" as RRD
+participant ":DB" as DB
+
+User -> Frontend: 1:选择音频，点击上传
+Frontend -> RC: 2:上传请求
+RC -> RS: 3:校验文件，保存上传记录
+RS -> RRD: 4:插入上传记录
+RRD -> DB: 5:写入上传记录表
+DB --> Frontend: 6:上传成功
+Frontend --> User: 7:等待分析
+
+User -> Frontend: 8:点击开始分析推荐
+Frontend -> RC: 9:分析请求
+RC -> RS: 10:调用音频特征提取和AI语义增强
+RS -> RS: 11:遍历曲库计算相似度
+RS -> RS: 12:筛选排序取Top20
+RS -> RRD: 13:写入推荐记录
+RRD -> DB: 14:写入推荐表
+DB --> Frontend: 15:分析完成
+Frontend --> User: 16:展示推荐歌曲列表
+
+@enduml

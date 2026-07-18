@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.personalmusicsystem.mapper.UploadRecordMapper">
+    
+    <resultMap id="BaseResultMap" type="com.example.personalmusicsystem.entity.UploadRecord">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="file_url" property="fileUrl"/>
+        <result column="file_name" property="fileName"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="file_type" property="fileType"/>
+        <result column="status" property="status"/>
+        <result column="features" property="features"/>
+        <result column="analysis_result" property="analysisResult"/>
+        <result column="error_message" property="errorMessage"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <resultMap id="VOResultMap" type="com.example.personalmusicsystem.dto.response.UploadRecordVO">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="file_url" property="fileUrl"/>
+        <result column="file_name" property="fileName"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="file_type" property="fileType"/>
+        <result column="status" property="status"/>
+        <result column="features" property="features"/>
+        <result column="analysis_result" property="analysisResult"/>
+        <result column="error_message" property="errorMessage"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+    </resultMap>
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM upload_record WHERE id = #{id}
+    </select>
+    
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT * FROM upload_record
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO upload_record (user_id, file_url, file_name, file_size, file_type, status)
+        VALUES (#{userId}, #{fileUrl}, #{fileName}, #{fileSize}, #{fileType}, #{status})
+    </insert>
+    
+    <update id="update">
+        UPDATE upload_record
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="features != null">features = #{features},</if>
+            <if test="analysisResult != null">analysis_result = #{analysisResult},</if>
+            <if test="errorMessage != null">error_message = #{errorMessage},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM upload_record WHERE id = #{id}
+    </delete>
+    
+    <select id="countByUserId" resultType="long">
+        SELECT COUNT(*) FROM upload_record
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+        </where>
+    </select>
+    
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*) FROM upload_record
+    </select>
+
+    <select id="countByStatus" resultType="long">
+        SELECT COUNT(*)
+        FROM upload_record
+        WHERE status = #{status}
+    </select>
+    
+    <select id="selectList" resultMap="VOResultMap">
+        SELECT ur.*, u.username, u.nickname
+        FROM upload_record ur
+        LEFT JOIN user u ON ur.user_id = u.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (ur.file_name LIKE CONCAT('%', #{keyword}, '%')
+                OR u.username LIKE CONCAT('%', #{keyword}, '%')
+                OR u.nickname LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null and status != ''">
+                AND ur.status = #{status}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND DATE(ur.create_time) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE(ur.create_time) &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY ur.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <select id="countList" resultType="long">
+        SELECT COUNT(*)
+        FROM upload_record ur
+        LEFT JOIN user u ON ur.user_id = u.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (ur.file_name LIKE CONCAT('%', #{keyword}, '%')
+                OR u.username LIKE CONCAT('%', #{keyword}, '%')
+                OR u.nickname LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null and status != ''">
+                AND ur.status = #{status}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND DATE(ur.create_time) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE(ur.create_time) &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectUserList" resultMap="BaseResultMap">
+        SELECT ur.*
+        FROM upload_record ur
+        <where>
+            AND ur.user_id = #{userId}
+            <if test="keyword != null and keyword != ''">
+                AND ur.file_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND DATE(ur.create_time) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE(ur.create_time) &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY ur.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <select id="countUserList" resultType="long">
+        SELECT COUNT(*)
+        FROM upload_record ur
+        <where>
+            AND ur.user_id = #{userId}
+            <if test="keyword != null and keyword != ''">
+                AND ur.file_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND DATE(ur.create_time) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE(ur.create_time) &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+    
+</mapper>
+

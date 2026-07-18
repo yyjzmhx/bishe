@@ -1,0 +1,63 @@
+// Element Plus Drawer 边框覆盖样式
+// 专门用于移除评论抽屉的白边
+
+// 暗色模式下的评论抽屉 - 最高优先级覆盖
+[data-theme="dark"] {
+  // 使用最高优先级的选择器覆盖所有可能的边框
+  body .comment-drawer .el-drawer,
+  html .comment-drawer .el-drawer,
+  #app .comment-drawer .el-drawer,
+  body .el-drawer.comment-drawer,
+  html .el-drawer.comment-drawer,
+  #app .el-drawer.comment-drawer {
+    border: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+    
+    &::before,
+    &::after {
+      display: none !important;
+      border: none !important;
+      content: none !important;
+      border-width: 0 !important;
+      border-style: none !important;
+      border-color: transparent !important;
+    }
+  }
+  
+  body .comment-drawer .el-drawer__wrapper,
+  html .comment-drawer .el-drawer__wrapper,
+  #app .comment-drawer .el-drawer__wrapper {
+    border: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+  }
+  
+  body .comment-drawer .el-drawer__body,
+  html .comment-drawer .el-drawer__body,
+  #app .comment-drawer .el-drawer__body {
+    border: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+  }
+  
+  body .comment-drawer .el-drawer__header,
+  html .comment-drawer .el-drawer__header,
+  #app .comment-drawer .el-drawer__header {
+    border: 0 !important;
+    border-bottom: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+  }
+}
+

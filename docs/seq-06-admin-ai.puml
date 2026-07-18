@@ -1,0 +1,27 @@
+﻿@startuml
+title 用户社区与AI管理时序图
+
+actor 管理员 as Admin
+participant ":管理页面" as Frontend
+participant ":AdminController" as AC
+participant ":AdminService" as AS
+participant ":AdminDao" as AD
+participant ":DB" as DB
+
+Admin -> Frontend: 1:管理用户/反馈/AI配置
+Frontend -> AC: 2:管理请求
+AC -> AS: 3:用户/反馈/AI配置操作
+AS -> AD: 4:读写用户表/反馈表/AI配置表
+AD -> DB: 5:数据库操作
+DB --> Frontend: 6:返回结果
+Frontend --> Admin: 7:展示结果
+
+Admin -> Frontend: 8:查看监控面板
+Frontend -> AC: 9:监控数据请求
+AC -> AS: 10:统计推荐准确率和数据总览
+AS -> AD: 11:聚合查询推荐/反馈/音乐/用户表
+AD -> DB: 12:聚合查询
+DB --> Frontend: 13:返回{准确率, 用户数, 音乐数, 上传数, 反馈数}
+Frontend --> Admin: 14:展示监控面板
+
+@enduml

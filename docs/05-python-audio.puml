@@ -1,0 +1,109 @@
+﻿@startuml
+
+' ============================================================
+' 个性化音乐推荐系统 — Python 音频分析服务模型 (PlantUML)
+' ============================================================
+
+title 个性化音乐推荐系统 — Python 音频分析服务模型
+
+skinparam classAttributeIconSize 0
+
+class AnalyzeRequest {
+  + file_path : str
+  + file_name : str | None
+  + title : str | None
+  + artist : str | None
+  + album : str | None
+  + genre : str | None
+  + lyrics : str | None
+  + source_kind : str | None
+}
+
+class AnalysisResponse {
+  + style : str
+  + emotion : str
+  + rhythm : str
+  + instruments : list[str]
+  + atmosphere : str
+  + description : str
+  + keywords : list[str]
+  + vector : list[float]
+  + vectorLabels : list[str]
+  + technicalSummary : str
+  + extractionMode : str
+  + durationSeconds : int
+  + sampleRate : int
+  + bitRateKbps : int | None
+  + channels : int
+  + formatName : str
+  + codecName : str
+  + tagTitle : str | None
+  + tagArtist : str | None
+  + tagAlbum : str | None
+  + tagGenre : str | None
+  + tagComment : str | None
+  + aiEnhanced : bool
+  + extra : Extra
+}
+
+class Extra {
+  + tempoBpm : float
+  + detectedKey : str
+  + spectralFlatness : float
+  + percussiveRatio : float
+  + mfccMean : list[float]
+}
+
+class FeatureVector {
+  + energy : float
+  + rhythmActivity : float
+  + brightness : float
+  + dynamicRange : float
+  + textureComplexity : float
+}
+
+class "FastAPI App" as FastAPI {
+  + /health : GET
+  + /analyze : POST
+}
+
+class "librosa" as Librosa {
+  + load()
+  + get_duration()
+  + feature.rms()
+  + feature.spectral_centroid()
+  + feature.spectral_rolloff()
+  + feature.spectral_flatness()
+  + feature.zero_crossing_rate()
+  + onset.onset_strength()
+  + feature.tempo()
+  + effects.hpss()
+  + feature.chroma_stft()
+  + feature.mfcc()
+}
+
+class "推断函数" as InferFuncs {
+  + infer_style()
+  + infer_emotion()
+  + infer_rhythm()
+  + infer_atmosphere()
+  + infer_instruments()
+}
+
+class "工具函数" as Utils {
+  + clamp()
+  + safe_text()
+  + normalize_feature()
+  + mean_or_zero()
+}
+
+AnalyzeRequest --> AnalysisResponse : "/analyze"
+AnalysisResponse --> Extra : "extra"
+AnalysisResponse --> FeatureVector : "vector"
+FastAPI ..> AnalyzeRequest : <<body>>
+FastAPI --> AnalysisResponse : <<return>>
+FastAPI --> Librosa : "调用特征提取"
+FastAPI --> InferFuncs : "调用推断"
+FastAPI --> Utils : "调用工具"
+
+@enduml

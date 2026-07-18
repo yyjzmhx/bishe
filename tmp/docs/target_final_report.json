@@ -1,0 +1,315 @@
+{
+  "splits": [
+    {
+      "source_index": 3,
+      "split_row": 8,
+      "title": "表3.2   音频 AI 推荐"
+    },
+    {
+      "source_index": 7,
+      "split_row": 9,
+      "title": "表3.5   内容资源管理"
+    },
+    {
+      "source_index": 10,
+      "split_row": 5,
+      "title": "表4.1  用户表"
+    },
+    {
+      "source_index": 12,
+      "split_row": 15,
+      "title": "表4.2  音乐表"
+    },
+    {
+      "source_index": 16,
+      "split_row": 8,
+      "title": "表4.5  反馈及社区表"
+    },
+    {
+      "source_index": 19,
+      "split_row": 5,
+      "title": "表4.7  AI配置表"
+    },
+    {
+      "source_index": 22,
+      "split_row": 3,
+      "title": "表4.9 公告数据表"
+    },
+    {
+      "source_index": 25,
+      "split_row": 4,
+      "title": "表4.11 用户标签数据表"
+    },
+    {
+      "source_index": 32,
+      "split_row": 3,
+      "title": "表6.6 用户提交代码判题测试"
+    }
+  ],
+  "tables": [
+    {
+      "index": 1,
+      "start_page": 1,
+      "end_page": 1,
+      "rows": 11,
+      "cols": 3,
+      "title": ""
+    },
+    {
+      "index": 2,
+      "start_page": 17,
+      "end_page": 17,
+      "rows": 9,
+      "cols": 2,
+      "title": "表3.1  用户认证与资料维护"
+    },
+    {
+      "index": 3,
+      "start_page": 17,
+      "end_page": 18,
+      "rows": 7,
+      "cols": 2,
+      "title": "表3.2   音频 AI 推荐"
+    },
+    {
+      "index": 4,
+      "start_page": 18,
+      "end_page": 18,
+      "rows": 4,
+      "cols": 2,
+      "title": "表3.2（续） 音频 AI 推荐"
+    },
+    {
+      "index": 5,
+      "start_page": 18,
+      "end_page": 19,
+      "rows": 9,
+      "cols": 2,
+      "title": "表3.3   音乐浏览、播放与收藏"
+    },
+    {
+      "index": 6,
+      "start_page": 19,
+      "end_page": 20,
+      "rows": 9,
+      "cols": 2,
+      "title": "表3.4  社区互动"
+    },
+    {
+      "index": 7,
+      "start_page": 20,
+      "end_page": 20,
+      "rows": 8,
+      "cols": 2,
+      "title": "表3.5   内容资源管理"
+    },
+    {
+      "index": 8,
+      "start_page": 20,
+      "end_page": 20,
+      "rows": 3,
+      "cols": 2,
+      "title": "表3.5（续） 内容资源管理"
+    },
+    {
+      "index": 9,
+      "start_page": 20,
+      "end_page": 21,
+      "rows": 9,
+      "cols": 2,
+      "title": "表3.6   用户、社区与 AI 管理"
+    },
+    {
+      "index": 10,
+      "start_page": 35,
+      "end_page": 35,
+      "rows": 4,
+      "cols": 6,
+      "title": "表4.1  用户表"
+    },
+    {
+      "index": 11,
+      "start_page": 35,
+      "end_page": 36,
+      "rows": 9,
+      "cols": 6,
+      "title": "表4.1（续） 用户表"
+    },
+    {
+      "index": 12,
+      "start_page": 36,
+      "end_page": 36,
+      "rows": 14,
+      "cols": 6,
+      "title": "表4.2  音乐表"
+    },
+    {
+      "index": 13,
+      "start_page": 36,
+      "end_page": 37,
+      "rows": 5,
+      "cols": 6,
+      "title": "表4.2（续） 音乐表"
+    },
+    {
+      "index": 14,
+      "start_page": 37,
+      "end_page": 37,
+      "rows": 13,
+      "cols": 6,
+      "title": "表4.3  上传记录表"
+    },
+    {
+      "index": 15,
+      "start_page": 37,
+      "end_page": 38,
+      "rows": 7,
+      "cols": 6,
+      "title": "表4.4  推荐记录表"
+    },
+    {
+      "index": 16,
+      "start_page": 38,
+      "end_page": 38,
+      "rows": 7,
+      "cols": 6,
+      "title": "表4.5  反馈及社区表"
+    },
+    {
+      "index": 17,
+      "start_page": 38,
+      "end_page": 38,
+      "rows": 4,
+      "cols": 6,
+      "title": "表4.5（续） 反馈及社区表"
+    },
+    {
+      "index": 18,
+      "start_page": 39,
+      "end_page": 39,
+      "rows": 9,
+      "cols": 6,
+      "title": "表4.6  评论点赞表"
+    },
+    {
+      "index": 19,
+      "start_page": 39,
+      "end_page": 39,
+      "rows": 4,
+      "cols": 6,
+      "title": "表4.7  AI配置表"
+    },
+    {
+      "index": 20,
+      "start_page": 39,
+      "end_page": 40,
+      "rows": 10,
+      "cols": 6,
+      "title": "表4.7（续） AI配置表"
+    },
+    {
+      "index": 21,
+      "start_page": 40,
+      "end_page": 40,
+      "rows": 9,
+      "cols": 6,
+      "title": "表4.8 报告表"
+    },
+    {
+      "index": 22,
+      "start_page": 40,
+      "end_page": 40,
+      "rows": 2,
+      "cols": 6,
+      "title": "表4.9 公告数据表"
+    },
+    {
+      "index": 23,
+      "start_page": 40,
+      "end_page": 41,
+      "rows": 9,
+      "cols": 6,
+      "title": "表4.9（续） 公告数据表"
+    },
+    {
+      "index": 24,
+      "start_page": 41,
+      "end_page": 41,
+      "rows": 11,
+      "cols": 6,
+      "title": "表4.10 轮播图数据表"
+    },
+    {
+      "index": 25,
+      "start_page": 41,
+      "end_page": 41,
+      "rows": 3,
+      "cols": 6,
+      "title": "表4.11 用户标签数据表"
+    },
+    {
+      "index": 26,
+      "start_page": 41,
+      "end_page": 42,
+      "rows": 7,
+      "cols": 6,
+      "title": "表4.11（续） 用户标签数据表"
+    },
+    {
+      "index": 27,
+      "start_page": 61,
+      "end_page": 61,
+      "rows": 3,
+      "cols": 6,
+      "title": "表6.1 用户提交代码判题测试"
+    },
+    {
+      "index": 28,
+      "start_page": 62,
+      "end_page": 63,
+      "rows": 3,
+      "cols": 6,
+      "title": "表6.2 上传音频与分析测试"
+    },
+    {
+      "index": 29,
+      "start_page": 64,
+      "end_page": 64,
+      "rows": 3,
+      "cols": 6,
+      "title": "表6.3 音乐浏览播放与收藏测试"
+    },
+    {
+      "index": 30,
+      "start_page": 65,
+      "end_page": 65,
+      "rows": 3,
+      "cols": 6,
+      "title": "表6.4 社区互动测试"
+    },
+    {
+      "index": 31,
+      "start_page": 66,
+      "end_page": 67,
+      "rows": 3,
+      "cols": 6,
+      "title": "表6.5 内容资源管理测试"
+    },
+    {
+      "index": 32,
+      "start_page": 68,
+      "end_page": 68,
+      "rows": 2,
+      "cols": 6,
+      "title": "表6.6 用户提交代码判题测试"
+    },
+    {
+      "index": 33,
+      "start_page": 68,
+      "end_page": 68,
+      "rows": 3,
+      "cols": 6,
+      "title": "表6.6（续） 用户提交代码判题测试"
+    }
+  ]
+}

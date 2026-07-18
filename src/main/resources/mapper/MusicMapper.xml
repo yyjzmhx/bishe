@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.personalmusicsystem.mapper.MusicMapper">
+    
+    <resultMap id="BaseResultMap" type="com.example.personalmusicsystem.entity.Music">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="artist" property="artist"/>
+        <result column="album" property="album"/>
+        <result column="file_url" property="fileUrl"/>
+        <result column="preview_url" property="previewUrl"/>
+        <result column="duration" property="duration"/>
+        <result column="genre" property="genre"/>
+        <result column="lyrics" property="lyrics"/>
+        <result column="features" property="features"/>
+        <result column="cover_url" property="coverUrl"/>
+        <result column="play_count" property="playCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM music WHERE id = #{id}
+    </select>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO music (title, artist, album, file_url, preview_url, duration, genre, lyrics, features, cover_url, status)
+        VALUES (#{title}, #{artist}, #{album}, #{fileUrl}, #{previewUrl}, #{duration}, #{genre}, #{lyrics}, #{features}, #{coverUrl}, #{status})
+    </insert>
+    
+    <update id="update">
+        UPDATE music
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="artist != null">artist = #{artist},</if>
+            <if test="album != null">album = #{album},</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url = #{fileUrl},</if>
+            <if test="previewUrl != null and previewUrl != ''">preview_url = #{previewUrl},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="genre != null">genre = #{genre},</if>
+            <if test="lyrics != null">lyrics = #{lyrics},</if>
+            <if test="features != null">features = #{features},</if>
+            <if test="coverUrl != null">cover_url = #{coverUrl},</if>
+            <if test="playCount != null">play_count = #{playCount},</if>
+            <if test="likeCount != null">like_count = #{likeCount},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM music WHERE id = #{id}
+    </delete>
+    
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT * FROM music
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%')
+                OR artist LIKE CONCAT('%', #{keyword}, '%')
+                OR album LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="artist != null and artist != ''">
+                AND artist = #{artist}
+            </if>
+            <if test="genre != null and genre != ''">
+                AND genre = #{genre}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM music
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%')
+                OR artist LIKE CONCAT('%', #{keyword}, '%')
+                OR album LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="artist != null and artist != ''">
+                AND artist = #{artist}
+            </if>
+            <if test="genre != null and genre != ''">
+                AND genre = #{genre}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectByFeatures" resultMap="BaseResultMap">
+        SELECT * FROM music
+        WHERE status = 1 AND features IS NOT NULL
+        ORDER BY play_count DESC, like_count DESC, update_time DESC, id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectGenreDistribution" resultType="map">
+        SELECT
+            COALESCE(NULLIF(TRIM(genre), ''), '未分类') AS name,
+            COUNT(*) AS value
+        FROM music
+        GROUP BY COALESCE(NULLIF(TRIM(genre), ''), '未分类')
+        ORDER BY value DESC, name ASC
+        LIMIT #{limit}
+    </select>
+    
+</mapper>
+

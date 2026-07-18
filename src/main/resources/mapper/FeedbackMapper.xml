@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.personalmusicsystem.mapper.FeedbackMapper">
+    
+    <resultMap id="BaseResultMap" type="com.example.personalmusicsystem.entity.Feedback">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="recommend_id" property="recommendId"/>
+        <result column="music_id" property="musicId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="type" property="type"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    
+    <resultMap id="VOResultMap" type="com.example.personalmusicsystem.dto.response.FeedbackVO">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="recommend_id" property="recommendId"/>
+        <result column="music_id" property="musicId"/>
+        <result column="type" property="type"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+        <result column="music_title" property="musicTitle"/>
+        <result column="music_artist" property="musicArtist"/>
+    </resultMap>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO feedback (user_id, recommend_id, music_id, parent_id, type, content)
+        VALUES (#{userId}, #{recommendId}, #{musicId}, #{parentId}, #{type}, #{content})
+    </insert>
+    
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT * FROM feedback
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="musicId != null">
+                AND music_id = #{musicId}
+            </if>
+            <if test="type != null and type != ''">
+                <choose>
+                    <when test="type.indexOf(',') != -1">
+                        AND type IN
+                        <foreach collection="type.split(',')" item="item" open="(" separator="," close=")">
+                            #{item}
+                        </foreach>
+                    </when>
+                    <otherwise>
+                        AND type = #{type}
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <resultMap id="CommentResultMap" type="com.example.personalmusicsystem.dto.response.CommentVO">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="music_id" property="musicId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="is_liked" property="isLiked"/>
+        <result column="reply_count" property="replyCount"/>
+    </resultMap>
+
+    <resultMap id="FavoriteMusicResultMap" type="com.example.personalmusicsystem.dto.response.FavoriteMusicVO">
+        <id column="id" property="id"/>
+        <result column="favorite_id" property="favoriteId"/>
+        <result column="title" property="title"/>
+        <result column="artist" property="artist"/>
+        <result column="album" property="album"/>
+        <result column="file_url" property="fileUrl"/>
+        <result column="preview_url" property="previewUrl"/>
+        <result column="duration" property="duration"/>
+        <result column="genre" property="genre"/>
+        <result column="lyrics" property="lyrics"/>
+        <result column="cover_url" property="coverUrl"/>
+        <result column="play_count" property="playCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="status" property="status"/>
+        <result column="favorite_time" property="favoriteTime"/>
+    </resultMap>
+
+    <resultMap id="CommunityPostResultMap" type="com.example.personalmusicsystem.dto.response.CommunityPostVO">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="music_id" property="musicId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="is_liked" property="isLiked"/>
+        <result column="reply_count" property="replyCount"/>
+        <result column="music_title" property="musicTitle"/>
+        <result column="music_artist" property="musicArtist"/>
+        <result column="music_cover_url" property="musicCoverUrl"/>
+    </resultMap>
+    
+    <select id="selectCommentsByMusicId" resultMap="CommentResultMap">
+        SELECT f.id, f.user_id, f.music_id, f.parent_id, f.content, f.create_time,
+               u.username, u.nickname, u.avatar,
+               COALESCE(like_stats.like_count, 0) as like_count,
+               COALESCE(reply_stats.reply_count, 0) as reply_count,
+               CASE WHEN #{currentUserId} IS NOT NULL AND user_like.id IS NOT NULL THEN 1 ELSE 0 END as is_liked
+        FROM feedback f
+        LEFT JOIN user u ON f.user_id = u.id
+        LEFT JOIN (
+            SELECT comment_id, COUNT(*) as like_count
+            FROM comment_like
+            GROUP BY comment_id
+        ) like_stats ON f.id = like_stats.comment_id
+        LEFT JOIN (
+            SELECT parent_id, COUNT(*) as reply_count
+            FROM feedback
+            WHERE type = 'COMMENT' AND parent_id IS NOT NULL
+            GROUP BY parent_id
+        ) reply_stats ON f.id = reply_stats.parent_id
+        <if test="currentUserId != null">
+        LEFT JOIN comment_like user_like ON f.id = user_like.comment_id AND user_like.user_id = #{currentUserId}
+        </if>
+        <if test="currentUserId == null">
+        LEFT JOIN comment_like user_like ON 1 = 0
+        </if>
+        WHERE f.music_id = #{musicId} AND f.type = 'COMMENT' AND (f.parent_id IS NULL OR f.parent_id = 0)
+        ORDER BY f.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <!-- 按点赞数排序（最热） -->
+    <select id="selectCommentsByMusicIdOrderByHot" resultMap="CommentResultMap">
+        SELECT f.id, f.user_id, f.music_id, f.parent_id, f.content, f.create_time,
+               u.username, u.nickname, u.avatar,
+               COALESCE(like_stats.like_count, 0) as like_count,
+               COALESCE(reply_stats.reply_count, 0) as reply_count,
+               CASE WHEN #{currentUserId} IS NOT NULL AND user_like.id IS NOT NULL THEN 1 ELSE 0 END as is_liked
+        FROM feedback f
+        LEFT JOIN user u ON f.user_id = u.id
+        LEFT JOIN (
+            SELECT comment_id, COUNT(*) as like_count
+            FROM comment_like
+            GROUP BY comment_id
+        ) like_stats ON f.id = like_stats.comment_id
+        LEFT JOIN (
+            SELECT parent_id, COUNT(*) as reply_count
+            FROM feedback
+            WHERE type = 'COMMENT' AND parent_id IS NOT NULL
+            GROUP BY parent_id
+        ) reply_stats ON f.id = reply_stats.parent_id
+        <if test="currentUserId != null">
+        LEFT JOIN comment_like user_like ON f.id = user_like.comment_id AND user_like.user_id = #{currentUserId}
+        </if>
+        <if test="currentUserId == null">
+        LEFT JOIN comment_like user_like ON 1 = 0
+        </if>
+        WHERE f.music_id = #{musicId} AND f.type = 'COMMENT' AND (f.parent_id IS NULL OR f.parent_id = 0)
+        ORDER BY like_count DESC, f.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <!-- 查询评论的回复列表 -->
+    <select id="selectRepliesByCommentId" resultMap="CommentResultMap">
+        SELECT f.id, f.user_id, f.music_id, f.parent_id, f.content, f.create_time,
+               u.username, u.nickname, u.avatar,
+               COALESCE(like_stats.like_count, 0) as like_count,
+               CASE WHEN #{currentUserId} IS NOT NULL AND user_like.id IS NOT NULL THEN 1 ELSE 0 END as is_liked
+        FROM feedback f
+        LEFT JOIN user u ON f.user_id = u.id
+        LEFT JOIN (
+            SELECT comment_id, COUNT(*) as like_count
+            FROM comment_like
+            GROUP BY comment_id
+        ) like_stats ON f.id = like_stats.comment_id
+        <if test="currentUserId != null">
+        LEFT JOIN comment_like user_like ON f.id = user_like.comment_id AND user_like.user_id = #{currentUserId}
+        </if>
+        <if test="currentUserId == null">
+        LEFT JOIN comment_like user_like ON 1 = 0
+        </if>
+        WHERE f.parent_id = #{commentId} AND f.type = 'COMMENT'
+        ORDER BY f.create_time ASC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectFavoriteMusicList" resultMap="FavoriteMusicResultMap">
+        SELECT m.id, f.id AS favorite_id, m.title, m.artist, m.album,
+               m.file_url, m.preview_url, m.duration, m.genre, m.lyrics,
+               m.cover_url, m.play_count, m.like_count, m.status,
+               f.create_time AS favorite_time
+        FROM feedback f
+        INNER JOIN music m ON f.music_id = m.id
+        WHERE f.user_id = #{userId}
+          AND f.type = 'FAVORITE'
+        <if test="keyword != null and keyword != ''">
+            AND (m.title LIKE CONCAT('%', #{keyword}, '%')
+            OR m.artist LIKE CONCAT('%', #{keyword}, '%')
+            OR m.album LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY f.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countFavoriteMusicList" resultType="long">
+        SELECT COUNT(*)
+        FROM feedback f
+        INNER JOIN music m ON f.music_id = m.id
+        WHERE f.user_id = #{userId}
+          AND f.type = 'FAVORITE'
+        <if test="keyword != null and keyword != ''">
+            AND (m.title LIKE CONCAT('%', #{keyword}, '%')
+            OR m.artist LIKE CONCAT('%', #{keyword}, '%')
+            OR m.album LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+    </select>
+
+    <select id="selectCommunityFeedByLatest" resultMap="CommunityPostResultMap">
+        SELECT f.id, f.user_id, f.music_id, f.parent_id, f.content, f.create_time,
+               u.username, u.nickname, u.avatar,
+               COALESCE(like_stats.like_count, 0) AS like_count,
+               COALESCE(reply_stats.reply_count, 0) AS reply_count,
+               CASE WHEN #{currentUserId} IS NOT NULL AND user_like.id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+               m.title AS music_title,
+               m.artist AS music_artist,
+               m.cover_url AS music_cover_url
+        FROM feedback f
+        LEFT JOIN user u ON f.user_id = u.id
+        LEFT JOIN music m ON f.music_id = m.id
+        LEFT JOIN (
+            SELECT comment_id, COUNT(*) AS like_count
+            FROM comment_like
+            GROUP BY comment_id
+        ) like_stats ON f.id = like_stats.comment_id
+        LEFT JOIN (
+            SELECT parent_id, COUNT(*) AS reply_count
+            FROM feedback
+            WHERE type = 'COMMENT' AND parent_id IS NOT NULL
+            GROUP BY parent_id
+        ) reply_stats ON f.id = reply_stats.parent_id
+        <if test="currentUserId != null">
+        LEFT JOIN comment_like user_like ON f.id = user_like.comment_id AND user_like.user_id = #{currentUserId}
+        </if>
+        <if test="currentUserId == null">
+        LEFT JOIN comment_like user_like ON 1 = 0
+        </if>
+        WHERE f.type = 'COMMENT'
+          AND (f.parent_id IS NULL OR f.parent_id = 0)
+          AND f.music_id IS NOT NULL
+        <if test="keyword != null and keyword != ''">
+            AND (f.content LIKE CONCAT('%', #{keyword}, '%')
+            OR u.username LIKE CONCAT('%', #{keyword}, '%')
+            OR u.nickname LIKE CONCAT('%', #{keyword}, '%')
+            OR m.title LIKE CONCAT('%', #{keyword}, '%')
+            OR m.artist LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY f.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="selectCommunityFeedByHot" resultMap="CommunityPostResultMap">
+        SELECT f.id, f.user_id, f.music_id, f.parent_id, f.content, f.create_time,
+               u.username, u.nickname, u.avatar,
+               COALESCE(like_stats.like_count, 0) AS like_count,
+               COALESCE(reply_stats.reply_count, 0) AS reply_count,
+               CASE WHEN #{currentUserId} IS NOT NULL AND user_like.id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+               m.title AS music_title,
+               m.artist AS music_artist,
+               m.cover_url AS music_cover_url
+        FROM feedback f
+        LEFT JOIN user u ON f.user_id = u.id
+        LEFT JOIN music m ON f.music_id = m.id
+        LEFT JOIN (
+            SELECT comment_id, COUNT(*) AS like_count
+            FROM comment_like
+            GROUP BY comment_id
+        ) like_stats ON f.id = like_stats.comment_id
+        LEFT JOIN (
+            SELECT parent_id, COUNT(*) AS reply_count
+            FROM feedback
+            WHERE type = 'COMMENT' AND parent_id IS NOT NULL
+            GROUP BY parent_id
+        ) reply_stats ON f.id = reply_stats.parent_id
+        <if test="currentUserId != null">
+        LEFT JOIN comment_like user_like ON f.id = user_like.comment_id AND user_like.user_id = #{currentUserId}
+        </if>
+        <if test="currentUserId == null">
+        LEFT JOIN comment_like user_like ON 1 = 0
+        </if>
+        WHERE f.type = 'COMMENT'
+          AND (f.parent_id IS NULL OR f.parent_id = 0)
+          AND f.music_id IS NOT NULL
+        <if test="keyword != null and keyword != ''">
+            AND (f.content LIKE CONCAT('%', #{keyword}, '%')
+            OR u.username LIKE CONCAT('%', #{keyword}, '%')
+            OR u.nickname LIKE CONCAT('%', #{keyword}, '%')
+            OR m.title LIKE CONCAT('%', #{keyword}, '%')
+            OR m.artist LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY like_count DESC, reply_count DESC, f.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countCommunityFeed" resultType="long">
+        SELECT COUNT(*)
+        FROM feedback f
+        LEFT JOIN user u ON f.user_id = u.id
+        LEFT JOIN music m ON f.music_id = m.id
+        WHERE f.type = 'COMMENT'
+          AND (f.parent_id IS NULL OR f.parent_id = 0)
+          AND f.music_id IS NOT NULL
+        <if test="keyword != null and keyword != ''">
+            AND (f.content LIKE CONCAT('%', #{keyword}, '%')
+            OR u.username LIKE CONCAT('%', #{keyword}, '%')
+            OR u.nickname LIKE CONCAT('%', #{keyword}, '%')
+            OR m.title LIKE CONCAT('%', #{keyword}, '%')
+            OR m.artist LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+    </select>
+
+    <select id="checkCommentLike" resultType="long">
+        SELECT COUNT(*)
+        FROM comment_like
+        WHERE user_id = #{userId}
+          AND comment_id = #{commentId}
+    </select>
+
+    <insert id="insertCommentLike">
+        INSERT INTO comment_like (comment_id, user_id)
+        VALUES (#{commentId}, #{userId})
+    </insert>
+
+    <delete id="deleteCommentLike">
+        DELETE FROM comment_like
+        WHERE comment_id = #{commentId}
+          AND user_id = #{userId}
+    </delete>
+    
+    <delete id="deleteById">
+        DELETE FROM feedback WHERE id = #{id}
+    </delete>
+    
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM feedback
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="musicId != null">
+                AND music_id = #{musicId}
+            </if>
+            <if test="type != null and type != ''">
+                <choose>
+                    <when test="type.indexOf(',') != -1">
+                        AND type IN
+                        <foreach collection="type.split(',')" item="item" open="(" separator="," close=")">
+                            #{item}
+                        </foreach>
+                    </when>
+                    <otherwise>
+                        AND type = #{type}
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+    
+    <select id="countCommentsByMusicId" resultType="long">
+        SELECT COUNT(*) FROM feedback
+        WHERE music_id = #{musicId} AND type = 'COMMENT'
+    </select>
+    
+    <select id="checkUserLike" resultType="long">
+        SELECT COUNT(*) FROM feedback
+        WHERE user_id = #{userId} AND music_id = #{musicId} AND type = 'LIKE'
+    </select>
+
+    <select id="checkUserFavorite" resultType="long">
+        SELECT COUNT(*) FROM feedback
+        WHERE user_id = #{userId} AND music_id = #{musicId} AND type = 'FAVORITE'
+    </select>
+
+    <select id="selectByUserAndMusicAndType" resultMap="BaseResultMap">
+        SELECT *
+        FROM feedback
+        WHERE user_id = #{userId}
+          AND music_id = #{musicId}
+          AND type = #{type}
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM feedback WHERE id = #{id}
+    </select>
+    
+    <select id="selectAdminList" resultMap="VOResultMap">
+        SELECT f.*, u.username, u.nickname, m.title as music_title, m.artist as music_artist
+        FROM feedback f
+        LEFT JOIN user u ON f.user_id = u.id
+        LEFT JOIN music m ON f.music_id = m.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (f.content LIKE CONCAT('%', #{keyword}, '%')
+                OR u.username LIKE CONCAT('%', #{keyword}, '%')
+                OR u.nickname LIKE CONCAT('%', #{keyword}, '%')
+                OR m.title LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="type != null and type != ''">
+                <choose>
+                    <when test="type.indexOf(',') != -1">
+                        AND f.type IN
+                        <foreach collection="type.split(',')" item="item" open="(" separator="," close=")">
+                            #{item}
+                        </foreach>
+                    </when>
+                    <otherwise>
+                        AND f.type = #{type}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND DATE(f.create_time) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE(f.create_time) &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY f.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <select id="countAdminList" resultType="long">
+        SELECT COUNT(*)
+        FROM feedback f
+        LEFT JOIN user u ON f.user_id = u.id
+        LEFT JOIN music m ON f.music_id = m.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (f.content LIKE CONCAT('%', #{keyword}, '%')
+                OR u.username LIKE CONCAT('%', #{keyword}, '%')
+                OR u.nickname LIKE CONCAT('%', #{keyword}, '%')
+                OR m.title LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="type != null and type != ''">
+                <choose>
+                    <when test="type.indexOf(',') != -1">
+                        AND f.type IN
+                        <foreach collection="type.split(',')" item="item" open="(" separator="," close=")">
+                            #{item}
+                        </foreach>
+                    </when>
+                    <otherwise>
+                        AND f.type = #{type}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND DATE(f.create_time) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE(f.create_time) &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+    
+    <update id="update">
+        UPDATE feedback
+        <set>
+            <if test="type != null">type = #{type},</if>
+            <if test="content != null">content = #{content},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="countTodayByType" resultType="long">
+        SELECT COUNT(*)
+        FROM feedback
+        WHERE DATE(create_time) = CURDATE()
+        <if test="type != null and type != ''">
+            <choose>
+                <when test="type.indexOf(',') != -1">
+                    AND type IN
+                    <foreach collection="type.split(',')" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </when>
+                <otherwise>
+                    AND type = #{type}
+                </otherwise>
+            </choose>
+        </if>
+    </select>
+
+    <select id="countDistinctUsersByTypes" resultType="long">
+        SELECT COUNT(DISTINCT user_id)
+        FROM feedback
+        <where>
+            <if test="types != null and types != ''">
+                <choose>
+                    <when test="types.indexOf(',') != -1">
+                        AND type IN
+                        <foreach collection="types.split(',')" item="item" open="(" separator="," close=")">
+                            #{item}
+                        </foreach>
+                    </when>
+                    <otherwise>
+                        AND type = #{types}
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+    
+</mapper>
+

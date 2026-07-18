@@ -1,0 +1,78 @@
+// 颜色变量
+:root {
+  // 主色渐变（播放器同款青蓝色）
+  --primary-color: #00c3ff;
+  --primary-from: #00c3ff;
+  --primary-to: #0088ff;
+  --primary-gradient: linear-gradient(135deg, var(--primary-from), var(--primary-to));
+  
+  // 辅助色
+  --secondary-color: #7C3AED;
+  --accent-color: #10B981;
+  --danger-color: #EF4444;
+  --warning-color: #F59E0B;
+  
+  // 中性色
+  --bg-light: #F3F4F6;
+  --bg-white: #FFFFFF;
+  --text-dark: #111827;
+  --text-gray: #4B5563;
+  --text-light-gray: #9CA3AF;
+  --border-color: #E5E7EB;
+  
+  // 磨砂玻璃背景色
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+  
+  // 暗色模式
+  --bg-dark: #0F172A;
+  --bg-dark-secondary: #1E293B;
+  --text-light: #D1D5DB;
+  
+  // 阴影
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  // 圆角
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  
+  // 过渡
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.15s ease-out;
+  
+  // 布局
+  --header-height: 72px;
+  --sidebar-width: 260px;
+  --footer-height: 48px;
+}
+
+// 浅色模式（默认）
+[data-theme="light"],
+:root:not([data-theme]) {
+  --bg-light: #F3F4F6;
+  --bg-white: #FFFFFF;
+  --text-dark: #111827;
+  --text-gray: #4B5563;
+  --border-color: #E5E7EB;
+  
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+// 暗色模式
+[data-theme="dark"] {
+  --bg-light: #0F172A;
+  --bg-white: #1E293B;
+  --text-dark: #F3F4F6;
+  --text-gray: #9CA3AF;
+  --border-color: #374151;
+  
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}

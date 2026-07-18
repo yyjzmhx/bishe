@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.personalmusicsystem.mapper.UserPersonalTagMapper">
+    
+    <resultMap id="BaseResultMap" type="com.example.personalmusicsystem.entity.UserPersonalTag">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="name" property="name"/>
+        <result column="color" property="color"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_personal_tag (user_id, name, color, sort_order)
+        VALUES (#{userId}, #{name}, #{color}, #{sortOrder})
+    </insert>
+    
+    <update id="update">
+        UPDATE user_personal_tag
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="color != null">color = #{color},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+        </set>
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM user_personal_tag
+        WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+    
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT * FROM user_personal_tag
+        WHERE user_id = #{userId}
+        ORDER BY sort_order ASC, create_time ASC
+    </select>
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM user_personal_tag
+        WHERE id = #{id} AND user_id = #{userId}
+    </select>
+    
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(*) FROM user_personal_tag
+        WHERE user_id = #{userId}
+    </select>
+</mapper>
+

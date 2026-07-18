@@ -1,0 +1,147 @@
+// 渐变文字
+@mixin gradient-text {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// 卡片样式
+@mixin card {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+  transition: all var(--transition-base);
+  border: 1px solid var(--border-color);
+  
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+}
+
+// 磨砂玻璃卡片
+@mixin glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  transition: all var(--transition-base);
+  
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+}
+
+// 按钮渐变
+@mixin gradient-button {
+  background: var(--primary-gradient);
+  border: none;
+  color: white;
+  border-radius: var(--radius-md);
+  padding: 10px 24px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+// Flex居中
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// 文本省略
+@mixin text-ellipsis($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// 悬浮行表格样式
+@mixin hover-table {
+  :deep(.el-table) {
+    background: transparent;
+    --el-table-border-color: transparent;
+    --el-table-header-bg-color: transparent;
+    --el-table-row-hover-bg-color: transparent;
+    
+    // 表头样式
+    th.el-table__cell {
+      font-weight: 600;
+      color: var(--text-gray);
+      background: transparent;
+      border-bottom: none;
+      padding: 16px 0;
+    }
+    
+    .el-table__inner-wrapper::before {
+      display: none;
+    }
+    
+    .el-table__body {
+      border-spacing: 0 12px; // 行间距
+      
+      tr {
+        background: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+        border-radius: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 12px;
+        
+        &:hover {
+          transform: translateY(-2px) scale(1.005);
+          background: rgba(255, 255, 255, 0.9);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+          
+          // 悬浮时显示操作按钮
+          .action-buttons { 
+            opacity: 1; 
+          }
+        }
+        
+        td {
+          border-bottom: none;
+          padding: 16px 0;
+          
+          &:first-child { 
+            border-radius: 12px 0 0 12px; 
+            padding-left: 16px; 
+          }
+          &:last-child { 
+            border-radius: 0 12px 12px 0; 
+            padding-right: 16px; 
+          }
+        }
+      }
+    }
+  }
+}

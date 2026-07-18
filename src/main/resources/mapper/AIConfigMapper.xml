@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.personalmusicsystem.mapper.AIConfigMapper">
+    
+    <resultMap id="BaseResultMap" type="com.example.personalmusicsystem.entity.AIConfig">
+        <id column="id" property="id"/>
+        <result column="provider" property="provider"/>
+        <result column="api_key" property="apiKey"/>
+        <result column="base_url" property="baseUrl"/>
+        <result column="model" property="model"/>
+        <result column="temperature" property="temperature"/>
+        <result column="timeout" property="timeout"/>
+        <result column="analysis_strategy" property="analysisStrategy"/>
+        <result column="is_active" property="isActive"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM ai_config WHERE id = #{id}
+    </select>
+    
+    <select id="selectActive" resultMap="BaseResultMap">
+        SELECT * FROM ai_config WHERE is_active = 1 LIMIT 1
+    </select>
+    
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM ai_config ORDER BY update_time DESC
+    </select>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ai_config (provider, api_key, base_url, model, temperature, timeout, analysis_strategy, is_active)
+        VALUES (#{provider}, #{apiKey}, #{baseUrl}, #{model}, #{temperature}, #{timeout}, #{analysisStrategy}, #{isActive})
+    </insert>
+    
+    <update id="update">
+        UPDATE ai_config
+        SET provider = #{provider},
+            api_key = #{apiKey},
+            base_url = #{baseUrl},
+            model = #{model},
+            temperature = #{temperature},
+            timeout = #{timeout},
+            analysis_strategy = #{analysisStrategy},
+            is_active = #{isActive}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM ai_config WHERE id = #{id}
+    </delete>
+    
+    <update id="deactivateOthers">
+        UPDATE ai_config SET is_active = 0 WHERE id != #{currentId}
+    </update>
+    
+</mapper>
+

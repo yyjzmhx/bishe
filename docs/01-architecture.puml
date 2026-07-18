@@ -1,0 +1,120 @@
+﻿@startuml
+
+' ============================================================
+' 个性化音乐推荐系统 — 系统整体架构图 (PlantUML Component)
+' ============================================================
+
+title 个性化音乐推荐系统 — 系统架构图
+
+package "前端 Vue 3 SPA" as frontend {
+  [Vue 3 + TypeScript] as V
+  [Pinia 状态管理] as VP
+  [Vue Router] as VR
+  [Three.js 3D可视化] as V3
+  [ECharts 图表] as VE
+}
+
+package "后端 Spring Boot (8080)" as backend {
+
+  package "Controller 层" {
+    [AuthController] as C1
+    [MusicController] as C2
+    [UploadController] as C3
+    [RecommendController] as C4
+    [PlaylistController] as C5
+    [FeedbackController] as C6
+    [UserController] as C7
+    [UserPersonalTagController] as C8
+    [Admin*Controller] as C9
+  }
+
+  package "Service 层" {
+    [UserService] as S1
+    [MusicService] as S2
+    [UploadService] as S3
+    [RecommendService] as S4
+    [PlaylistService] as S5
+    [FeedbackService] as S6
+    [FileService] as S7
+    [EmailService] as S8
+    [VerificationCodeService] as S9
+  }
+
+  package "AI 子模块" {
+    [DynamicAIChatService] as AI1
+    [AudioAnalysisService] as AI2
+    [PythonAudioAnalysisClient] as AI3
+    [AudioMetadataExtractor] as AI4
+    [LocalAudioFeatureExtractor] as AI5
+  }
+
+  package "基础设施" {
+    [MyBatis Mapper] as M1
+    [JWT Util] as M2
+    [BCrypt Util] as M3
+    [StorageService/MinIO] as M4
+    [AuthInterceptor] as M5
+  }
+}
+
+database "MySQL :3307\nmusic_system" as DB
+database "Redis :6379" as RD
+database "MinIO :9000\nmusic-storage" as MN
+
+node "Python 音频分析\nFastAPI :9008\nlibrosa" as PY
+
+cloud "AI 云服务\nDashScope\nqwen-turbo" as DS
+
+' 前端 -> Controller
+V --> C1
+V --> C2
+V --> C3
+V --> C4
+V --> C5
+V --> C6
+V --> C7
+V --> C8
+V --> C9
+
+' Controller -> Service
+C1 --> S1
+C1 --> S9
+C2 --> S2
+C3 --> S3
+C4 --> S4
+C5 --> S5
+C6 --> S6
+C7 --> S1
+C8 --> S1
+
+' Service -> AI
+S3 --> AI2
+AI2 --> AI3
+AI3 --> PY
+S3 --> AI5
+AI2 --> DS
+
+' Service -> Mapper -> DB
+S1 --> M1
+S2 --> M1
+S3 --> M1
+S4 --> M1
+S5 --> M1
+S6 --> M1
+M1 --> DB
+
+' Service -> Utils
+S1 --> M2
+S1 --> M3
+
+' Controller -> Interceptor
+C1 --> M5
+
+' Storage
+S3 --> M4
+M4 --> MN
+
+' Redis
+S3 --> RD
+
+@enduml
